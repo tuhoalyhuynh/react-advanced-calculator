@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const Calculator = props => {
     // Declare state variables
@@ -7,6 +7,7 @@ const Calculator = props => {
     const [num1, setNum1] = useState(0)
     const [num2, setNum2] = useState(0)
     const [result, setResult] = useState('')
+    const [doMath, setDoMath] = useState(false)
 
     const handleClear = () => {
         setDisplay(0);
@@ -14,6 +15,7 @@ const Calculator = props => {
         setNum1(0)
         setNum2(0)
         setResult('')
+        setDoMath(false)
     }
 
     const handleNum = (num) => {
@@ -46,7 +48,24 @@ const Calculator = props => {
 
     const handleSubmit = () => {
         setNum2(parseFloat(display))
+        setDoMath(true)
+    }
+
+    const handleDecimal = () => {
+        if (display.toString().includes('.')) {
+            return
+        } else {
+            let currentDisplay = display.toString()
+            let newDisplay = currentDisplay.concat('.')
+            setDisplay(newDisplay)
+        }
+    }
+
+    useEffect (() => {
         let answer = 0
+        if (!doMath) {
+            return
+        }
         if (operator === '+') {
             answer = (num1 + num2)
         } else if (operator === '-') {
@@ -59,17 +78,8 @@ const Calculator = props => {
             answer = (num1 % num2)
         }
         setResult(answer.toFixed(2))
-    }
-
-    const handleDecimal = () => {
-        if (display.toString().includes('.')) {
-            return
-        } else {
-            let currentDisplay = display.toString()
-            let newDisplay = currentDisplay.concat('.')
-            setDisplay(newDisplay)
-        }
-    }
+        setDoMath(false)
+    }, [doMath])
 
     return (
         <div className="container">
